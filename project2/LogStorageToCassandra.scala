@@ -1,5 +1,4 @@
 
-//package com.sundogsoftware.sparkstreaming
 package project2
 
 import org.apache.spark.SparkConf
@@ -8,9 +7,8 @@ import org.apache.spark.storage.StorageLevel
 
 import java.util.regex.Pattern
 import java.util.regex.Matcher
-import com.twitter.jsr166e.LongAdder
 
-//import Utilities._
+import Utilities._
 
 import com.datastax.spark.connector._
 
@@ -18,29 +16,6 @@ import com.datastax.spark.connector._
  *  by IP address in a Cassandra database.
  */
 object CassandraExample {
-  
-   /** Makes sure only ERROR messages get logged to avoid log spam. */
-  def setupLogging() = {
-    import org.apache.log4j.{Level, Logger}   
-    val rootLogger = Logger.getRootLogger()
-    rootLogger.setLevel(Level.ERROR)   
-  }
-  
-   /** Retrieves a regex Pattern for parsing Apache access logs. */
-  def apacheLogPattern():Pattern = {
-    val ddd = "\\d{1,3}"                      
-    val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"  
-    val client = "(\\S+)"                     
-    val user = "(\\S+)"
-    val dateTime = "(\\[.+?\\])"              
-    val request = "\"(.*?)\""                 
-    val status = "(\\d{3})"
-    val bytes = "(\\S+)"                     
-    val referer = "\"(.*?)\""
-    val agent = "\"(.*?)\""
-    val regex = s"$ip $client $user $dateTime $request $status $bytes $referer $agent"
-    Pattern.compile(regex)    
-  }
   
   def main(args: Array[String]) {
 
@@ -79,7 +54,7 @@ object CassandraExample {
     requests.foreachRDD((rdd, time) => {
       rdd.cache()
       println("Writing " + rdd.count() + " rows to Cassandra")
-      rdd.saveToCassandra("ash", "logstore", SomeColumns("ip", "url", "status", "useragent"))
+      rdd.saveToCassandra("log", "logstore", SomeColumns("ip", "url", "status", "useragent"))
     })
     
     // Kick it off
